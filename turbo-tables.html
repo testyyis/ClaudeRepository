@@ -334,8 +334,12 @@ button:focus-visible,.key:focus-visible{outline:3px solid var(--sun);outline-off
       .filter(x => ![2,5,10].includes(x.a) && ![2,5,10].includes(x.b))
       .sort((x,y) => y.s - x.s);
     for (const x of slow){ if (qs.length >= 18) break; add(x.a, x.b); }
-    let guard = 0;
-    while (qs.length < 20 && guard++ < 200) add(rnd(6,9), rnd(6,9));
+    // complète avec les calculs restants, les plus durs d'abord (6 à 9 × 6 à 9, puis avec 3 ou 4)
+    const pool = [];
+    [3,4,6,7,8,9].forEach(a => [3,4,6,7,8,9].forEach(b => { if (a <= b && !has(a,b)) pool.push([a,b]); }));
+    shuffle(pool);
+    const hardPool = pool.filter(q => Math.min(...q) >= 6), restPool = pool.filter(q => Math.min(...q) < 6);
+    for (const q of [...hardPool, ...restPool]){ if (qs.length >= 20) break; add(q[0], q[1]); }
     // mélange en évitant deux fois de suite le même calcul
     for (let tries = 0; tries < 50; tries++){
       shuffle(qs);
