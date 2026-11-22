@@ -19,3 +19,13 @@ npm run build    # version de production dans dist/
 
 ## Sans npm (le plus simple)
 Télécharge le fichier [`brevet-boost.html`](brevet-boost.html) et ouvre-le en double-cliquant : l'application s'ouvre dans ton navigateur, sans rien installer, même hors connexion.
+
+---
+
+# Turbo Tables ✖️
+
+Petite application pour maîtriser les **tables de multiplication** : [`turbo-tables.html`](turbo-tables.html) (un seul fichier, à ouvrir dans le navigateur).
+
+- **Évaluation** de 20 calculs qui passe deux fois par chaque table de 2 à 10 (+ 2 bonus) → **note sur 20** et **temps de chaque réponse**.
+- Comparaison du temps moyen avec la partie précédente, courbe de progression, record de vitesse (compté à partir de 16/20).
+- **Carte des tables** colorée selon la vitesse, mode **« Entraîner mes plus lentes »**, séries 🔥, badges, sons et confettis.
