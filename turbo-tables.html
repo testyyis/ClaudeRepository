@@ -180,7 +180,7 @@ button:focus-visible,.key:focus-visible{outline:3px solid var(--sun);outline-off
   <section id="home" class="wrap" style="gap:20px">
     <div class="hero">
       <h2>Le grand tour des tables, chrono en main</h2>
-      <p>20 calculs qui passent par toutes les tables de 2 à 10. Tu obtiens une note sur 20 et ton temps pour chaque réponse. Ton défi : aller plus vite à chaque partie.</p>
+      <p>20 calculs qui passent par toutes les tables de 2 à 10, sans les « × 10 » trop faciles. Tu obtiens une note sur 20 et ton temps pour chaque réponse. Ton défi : aller plus vite à chaque partie.</p>
       <div class="hero-actions">
         <button class="btn btn-go" id="startEval">C'est parti !</button>
         <button class="btn btn-sun" id="startPractice">Entraîner mes plus lentes</button>
@@ -318,16 +318,24 @@ button:focus-visible,.key:focus-visible{outline:3px solid var(--sun);outline-off
 
   /* ---------- Génération des questions ---------- */
   function buildEval(){
-    // Chaque table de 2 à 10 apparaît deux fois (18 calculs) + 2 calculs bonus = 20.
+    // Peu de calculs faciles : jamais « × 1 », « × 2 », « × 5 » ou « × 10 » comme second nombre.
+    // Tables de 3 à 9 : 2 fois chacune (14) · tables de 2 et de 10 : 1 fois (2) · 4 calculs « durs » (6 à 9, ou tes plus lents) = 20.
     const qs = [];
-    TABLES.forEach(t => {
-      const other = shuffle([2,3,4,5,6,7,8,9,10]).slice(0,2);
-      other.forEach(o => qs.push(Math.random() < .5 ? [t,o] : [o,t]));
+    const has = (a,b) => qs.some(q => factKey(q[0],q[1]) === factKey(a,b));
+    const add = (a,b) => { if (has(a,b)) return false; qs.push(Math.random() < .5 ? [a,b] : [b,a]); return true; };
+    const HARD = [3,4,6,6,7,7,8,8,9,9]; // tirage pondéré vers 6, 7, 8, 9
+    [3,4,5,6,7,8,9].forEach(t => {
+      let n = 0, guard = 0;
+      while (n < 2 && guard++ < 100){ if (add(t, HARD[rnd(0, HARD.length-1)])) n++; }
     });
-    while (qs.length < 20){
-      const a = rnd(3,9), b = rnd(3,9);
-      if (!qs.some(q => factKey(q[0],q[1]) === factKey(a,b))) qs.push([a,b]);
-    }
+    [2,10].forEach(t => { let guard = 0; while (!add(t, rnd(6,9)) && guard++ < 50); });
+    const slow = Object.entries(data.facts)
+      .map(([k,f]) => { const [a,b] = k.split('x').map(Number); return { a, b, s: (f.ok ? 0 : 100000) + f.t }; })
+      .filter(x => ![2,5,10].includes(x.a) && ![2,5,10].includes(x.b))
+      .sort((x,y) => y.s - x.s);
+    for (const x of slow){ if (qs.length >= 18) break; add(x.a, x.b); }
+    let guard = 0;
+    while (qs.length < 20 && guard++ < 200) add(rnd(6,9), rnd(6,9));
     // mélange en évitant deux fois de suite le même calcul
     for (let tries = 0; tries < 50; tries++){
       shuffle(qs);
