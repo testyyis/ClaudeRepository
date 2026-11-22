@@ -16,3 +16,6 @@ npm install
 npm run dev      # développement
 npm run build    # version de production dans dist/
 ```
+
+## Sans npm (le plus simple)
+Télécharge le fichier [`brevet-boost.html`](brevet-boost.html) et ouvre-le en double-cliquant : l'application s'ouvre dans ton navigateur, sans rien installer, même hors connexion.
